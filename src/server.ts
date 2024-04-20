@@ -22,6 +22,7 @@ const wss = new WebSocketServer({ server: server });
 
 wss.on("connection", (socket) => {
     console.log("A user has connected!");
+    socket.send("I see you!");
 });
 
 app.get('/', (req, res) => {
