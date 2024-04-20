@@ -3,56 +3,43 @@ import websockets
 import json
 from bleak import BleakClient, BleakScanner
 
-def trigger_haptics():
-    print("haptics triggered")
+haptic_devices = []
 
-async def connect_to_bluetooth(websocket, connection_state):
+async def main_client(uri):
+
     print("looking for bluetooth")
     
     # scan for bluetooth devices once
-
-
     print("Scanning for bluetooth devices...")
     devices = await BleakScanner.discover()
     for d in devices:
-        print(d)
+        # print(d)
         if d.name == "Haptic Definition: Right Hand":
             async with BleakClient(d) as client:
+                haptic_devices.append(client)
                 print(d.name)
-                while connection_state["is_open"]:
-                    asyncio.sleep(1)
-
-async def receive_events(websocket, connection_state):
-    try:
-        async for message in websocket:
-            print("Received message:", message)
-            # data = json.loads(message)
-            # print("Received message:", data)
-
-    except websockets.exceptions.ConnectionClosed:
-        print("Connection closed by server.")
-    finally:
-        connection_state["is_open"] = False
-
-async def main_client(uri):
+                # while connection_state["is_open"]:
+                #     asyncio.sleep(1)
+    print(haptic_devices)
+    # now handle the socket events
     while(True):
         try:
             
             connection_state = {"is_open": True}
-
+            websocket = await websockets.connect(uri)
             try:
-                async with websockets.connect(uri) as websocket:
-                    # Create a task for send_frames
-                    connect_bluetooth_task = asyncio.create_task(connect_to_bluetooth(websocket, connection_state))
-                    # Create a task for receive_events
-                    receive_events_task = asyncio.create_task(receive_events(websocket, connection_state))
-                    
-                    # Wait for tasks to complete
-                    await asyncio.gather(connect_bluetooth_task, receive_events_task)
-                        
+                async for message in websocket:
+                    print("Received message:", message)
+                    # data = json.loads(message)
+                    # print("Received message:", data)
 
+            except websockets.exceptions.ConnectionClosed:
+                print("Connection closed by server.")
             except Exception as e:
                 print(f"WebSocket Error: {e}")
+            finally:
+                connection_state["is_open"] = False
+
         except Exception as e:
             pass
         
