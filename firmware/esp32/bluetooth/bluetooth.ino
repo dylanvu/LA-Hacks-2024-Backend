@@ -36,24 +36,34 @@ void setup() {
   // Start serial communication 
   Serial.begin(115200);
 
+  Serial.println("Beginning");
+
   // Create the BLE Device
   BLEDevice::init(bleServerName);
 
+  Serial.println("Initalized bluetooth");
+
   // Create the BLE Server
   BLEServer *pServer = BLEDevice::createServer();
+  Serial.println("Created bluetooth server");
   pServer->setCallbacks(new MyServerCallbacks());
 
   // Create the BLE Service
+  Serial.println("Created bluetooth service");
   BLEService *bleService = pServer->createService(SERVICE_UUID);
 
+  Serial.println("Starting service");
   // Start the service
   bleService->start();
 
   // Start advertising
+  Serial.println("Starting advertising");
   BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
   pAdvertising->addServiceUUID(SERVICE_UUID);
   pServer->getAdvertising()->start();
 }
 
 void loop() {
+  Serial.print(".");
+  delay(1000);
 }
