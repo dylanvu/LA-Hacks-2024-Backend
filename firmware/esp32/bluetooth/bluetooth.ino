@@ -4,7 +4,7 @@
 #include <BLE2902.h>
 
 //BLE server name
-#define bleServerName "Haptic Definition - Right Hand"
+#define bleServerName "Haptic Definition: Right Hand"
 
 // Timer variables
 unsigned long lastTime = 0;
@@ -24,6 +24,7 @@ BLEDescriptor bleTestDescriptor(BLEUUID((uint16_t)0x2902));
 //Setup callbacks onConnect and onDisconnect
 class MyServerCallbacks: public BLEServerCallbacks {
   void onConnect(BLEServer* pServer) {
+    Serial.println("Successfully connected!");
     deviceConnected = true;
   };
   void onDisconnect(BLEServer* pServer) {
@@ -55,5 +56,4 @@ void setup() {
 }
 
 void loop() {
-  Serial.print(".");
 }
