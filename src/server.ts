@@ -2,7 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import http from "http";
-import { WebSocketServer, WebSocket } from "ws";
+import WebSocket from "ws";
 
 // load up dotenv stuff
 dotenv.config();
@@ -18,7 +18,7 @@ app.use(cors({
 
 const server = http.createServer(app);
 
-const wss = new WebSocketServer({ server: server });
+const wss = new WebSocket.Server({ server }); 
 
 wss.on("connection", (socket) => {
     console.log("A user has connected!");
