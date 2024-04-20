@@ -1,6 +1,8 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import http from "http";
+import { WebSocketServer, WebSocket } from "ws";
 
 // load up dotenv stuff
 dotenv.config();
@@ -14,10 +16,18 @@ app.use(cors({
     origin: '*'
 }))
 
+const server = http.createServer(app);
+
+const wss = new WebSocketServer({ server: server });
+
+wss.on("connection", (socket) => {
+    console.log("A user has connected!");
+});
+
 app.get('/', (req, res) => {
     res.send("Hello World!");
 });
 
-app.listen(port, () => {
+server.listen(port, () => {
     console.log(`Example app listening on http://localhost:${port}`);
 });
