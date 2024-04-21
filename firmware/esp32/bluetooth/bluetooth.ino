@@ -31,18 +31,20 @@ class MyServerCallbacks: public BLEServerCallbacks {
     deviceConnected = false;
     BLEDevice::startAdvertising();
   };
+};
 
-  void onWrite(BLECharacteristic *pCharacteristic) {
-    std::string value = pCharacteristic->getValue();
+class MyCallbacks: public BLECharacteristicCallbacks {
+    void onWrite(BLECharacteristic *pCharacteristic) {
+        Serial.println("I got something!");
+        std::string value = pCharacteristic->getValue();
 
-    if (value.length() > 0) {
-        Serial.println("Received over BLE:");
-        for (int i = 0; i < value.length(); i++)
-            Serial.print(value[i]);
-
-        Serial.println();
+        if (value.length() > 0) {
+            Serial.println("Received over BLE:");
+            for (int i = 0; i < value.length(); i++)
+                Serial.print(value[i]);
+            Serial.println();
+        }
     }
-  }
 };
 
 void setup() {
@@ -71,6 +73,7 @@ void setup() {
 
   // Adding a descriptor to the characteristic
   pCharacteristic->addDescriptor(new BLE2902());
+  pCharacteristic->setCallbacks(new MyCallbacks());
 
   // Start the service
   bleService->start();

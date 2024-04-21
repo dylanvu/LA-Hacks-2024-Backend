@@ -20,10 +20,28 @@ const server = http.createServer(app);
 
 const wss = new WebSocket.Server({ server }); 
 
+let clients: WebSocket[] = [];
+
 wss.on("connection", (socket) => {
     console.log("A user has connected!");
+    clients.push(socket);
+    console.log(clients.length + " clients connected"); // number of
     socket.send("I see you!");
+    socket.on("message", (data) => {
+        console.log("Received: " + data);
+        if (String(data) === "ping") {
+            clients.forEach(function (client) {
+                client.send("pong");
+            });
+        }
+    });
 });
+
+wss.on("close", (socket: WebSocket) => { 
+    console.log("A user has disconnected!");
+    clients = clients.filter((client) => client !== socket);
+    }
+);
 
 app.get('/', (req, res) => {
     res.send("Hello World!");
