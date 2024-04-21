@@ -29,11 +29,9 @@ wss.on("connection", (socket) => {
     socket.send("I see you!");
     socket.on("message", (data) => {
         console.log("Received: " + data);
-        if (String(data) === "ping") {
-            clients.forEach(function (client) {
-                client.send("pong");
-            });
-        }
+        clients.forEach(function (client) {
+            client.send(data);
+        });
     });
 });
 
